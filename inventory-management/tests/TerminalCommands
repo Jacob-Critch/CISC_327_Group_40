@@ -1,6 +1,6 @@
 | SET WORKING DIRECTORY TO FUNCTIONAL DIRECTORY |
 
-cd "/mnt/c/GitHub Repositories/CISC 327/cisc227-group-24/inventory-management"
+cd "/mnt/c/Users/Jacob/Documents/GitHub Repositories/CISC 327 Repository/cisc227-group-24/inventory-management"
 
 | ACTIVATE VIRTUAL ENVIRONMENT |
 
@@ -13,3 +13,7 @@ python run.py
 | RUN TESTS |
 
 python -m pytest
+
+| RUN TESTS WITHOUT OUTPUT CAPTURING |
+
+python -m pytest -s
