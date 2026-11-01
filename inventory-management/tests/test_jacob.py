@@ -43,3 +43,14 @@ def test_supplier_creation_returns_expected_fields(client):
     assert supplier["contact_email"] == "johndoe@email.com"
     assert supplier["id"] == 1
     assert supplier["name"] == "Supplier"
+
+# Test 5: Update a supplier and validate its fields
+def test_supplier_update_returns_expected_fields(client):
+    response = client.post("/suppliers", json = {"contact_email": "johndoe@email.com", "name": "Supplier"})
+    assert response.status_code == 201
+    response = client.put("/suppliers/1", json = {"contact_email": "janedoe@email.com", "name": "Buyer"})
+    assert response.status_code == 200
+    supplier = response.get_json()
+    assert supplier["contact_email"] == "janedoe@email.com"
+    assert supplier["id"] == 1
+    assert supplier["name"] == "Buyer"
