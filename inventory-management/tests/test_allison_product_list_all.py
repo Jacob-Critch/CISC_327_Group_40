@@ -34,7 +34,7 @@ def test_product_create_products_then_list_all(client):
     # POST products
     create_resp = []
     product_id = []
-    for i in len(payload):
+    for i in range(len(payload)):
         create_resp.append(client.post("/products", json=payload[i]))
         assert create_resp[i].status_code == 201
         product_id.append(create_resp[i].get_json()["id"])
