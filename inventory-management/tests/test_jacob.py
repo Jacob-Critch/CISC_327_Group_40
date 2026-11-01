@@ -54,3 +54,14 @@ def test_supplier_update_returns_expected_fields(client):
     assert supplier["contact_email"] == "janedoe@email.com"
     assert supplier["id"] == 1
     assert supplier["name"] == "Buyer"
+
+# Test 6: Record a stock movement and validate its fields
+def test_stock_movement_recording_returns_expected_fields(client):
+    response = client.post("/products", json = {"name": "Stock Movement", "quantity_on_hand": 1, "reorder_level": 1, "sku": "A", "unit_price": 1})
+    assert response.status_code == 201
+    stockMovement = response.get_json()
+    assert stockMovement["name"] == "Stock Movement"
+    assert stockMovement["quantity_on_hand"] == 1
+    assert stockMovement["reorder_level"] == 1
+    assert stockMovement["sku"] == "A"
+    assert stockMovement["unit_price"] == 1
