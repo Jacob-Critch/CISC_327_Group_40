@@ -6,6 +6,9 @@ class Product:
         self.unit_price = unit_price
         self.quantity_on_hand = quantity_on_hand
         self.reorder_level = reorder_level
+        # Functional enhancement beginning
+        self.is_below_reorder_level = False
+        # Functional enhancement end  
 
     def to_dict(self):
         return {
@@ -15,4 +18,7 @@ class Product:
             "unit_price": self.unit_price,
             "quantity_on_hand": self.quantity_on_hand,
             "reorder_level": self.reorder_level,
+            # Functional enhancement beginning
+            "is_below_reorder_level": self.is_below_reorder_level
+            # Functional enhancement end
         }
