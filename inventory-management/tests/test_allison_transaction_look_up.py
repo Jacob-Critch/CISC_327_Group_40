@@ -21,7 +21,6 @@ def test_transaction_create_and_look_up_returns(client):
 
     from datetime import date
 
-    #
     payload_product = {
         "name": "Product 1",
         "sku": "AAA",
