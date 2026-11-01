@@ -65,3 +65,37 @@ def test_stock_movement_recording_returns_expected_fields(client):
     assert stockMovement["reorder_level"] == 1
     assert stockMovement["sku"] == "A"
     assert stockMovement["unit_price"] == 1
+
+# Functional enhancement beginning
+# Test 7: Invoke a stock alert on a threshold product and validate its fields
+def test_stock_alert_threshold_invocation_returns_expected_fields(client):
+    response = client.post("/products", json = {"name": "Product", "quantity_on_hand": 1, "reorder_level": 2, "sku": "A", "unit_price": 1})
+    assert response.status_code == 201
+    product = response.get_json()
+    assert product["id"] == 1
+    assert product["is_below_reorder_level"] == False
+    assert product["name"] == "Product"
+    assert product["quantity_on_hand"] == 1
+    assert product["reorder_level"] == 2
+    assert product["sku"] == "A"
+    assert product["unit_price"] == 1
+    response = client.post("/products/1/is-below-reorder-level")
+    assert response.status_code == 200
+    stock_alert = response.get_json()
+    assert stock_alert["message"] == "Stock alert for Product (1): 1 more are needed to restore target levels."
+
+# Test 8: Invoke a stock alert on non-threshold product and validate its fields
+def test_stock_alert_nonthreshold_invocation_returns_expected_fields(client):
+    response = client.post("/products", json = {"name": "Product", "quantity_on_hand": 2, "reorder_level": 2, "sku": "A", "unit_price": 1})
+    assert response.status_code == 201
+    product = response.get_json()
+    assert product["id"] == 1
+    assert product["is_below_reorder_level"] == False
+    assert product["name"] == "Product"
+    assert product["quantity_on_hand"] == 2
+    assert product["reorder_level"] == 2
+    assert product["sku"] == "A"
+    assert product["unit_price"] == 1
+    response = client.post("/products/1/is-below-reorder-level")
+    # Route modification required
+# Functional enhancement end
