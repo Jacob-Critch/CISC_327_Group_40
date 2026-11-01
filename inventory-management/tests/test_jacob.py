@@ -26,7 +26,7 @@ def test_product_update_returns_expected_fields(client):
     assert product["unit_price"] == 2
 
 # TEST 3: Get quantity on hand of a product and validate its fields
-def test_product_quantity_on_hand_retrieval(client):
+def test_product_quantity_on_hand_retrieval_returns_expected_fields(client):
     response = client.post("/products", json = {"name": "Product", "sku": "A", "quantity_on_hand": 1})
     assert response.status_code == 201
     response = client.get("/products/1/stock-level")
@@ -34,3 +34,12 @@ def test_product_quantity_on_hand_retrieval(client):
     product = response.get_json()
     assert product["product_id"] == 1
     assert product["quantity_on_hand"] == 1
+
+# TEST 4: Create a supplier and validate its fields
+def test_supplier_creation_returns_expected_fields(client):
+    response = client.post("/suppliers", json = {"contact_email": "johndoe@email.com", "name": "Supplier"})
+    assert response.status_code == 201
+    supplier = response.get_json()
+    assert supplier["contact_email"] == "johndoe@email.com"
+    assert supplier["id"] == 1
+    assert supplier["name"] == "Supplier"
