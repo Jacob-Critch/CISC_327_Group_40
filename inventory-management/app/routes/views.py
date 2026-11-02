@@ -1,9 +1,11 @@
+from datetime import date
 from flask import Blueprint, redirect, render_template, request, url_for
 
 from app import store
 from app.models.product import Product
 from app.models.supplier import Supplier
 from app.models.transaction import Transaction
+from app.models.business_relation_record import Business_Relation_Record
 
 views_bp = Blueprint("views", __name__)
 
@@ -83,3 +85,30 @@ def transactions_page():
             store.transactions[transaction_id] = transaction
         return redirect(url_for("views.transactions_page"))
     return render_template("transactions.html", transactions=store.transactions.values())
+
+@views_bp.route("/ui/business_relation_records", methods=["GET"])
+def business_relation_records_page():
+    store.business_relation_records = {}
+
+    for supplier in store.suppliers.values():
+        quantity_deliveries = 0
+        for transaction in store.transactions.values():
+            if transaction.supplier_id == supplier.id:
+                quantity_deliveries += 1
+
+        record_id = store.next_id("business_relation_record")
+        record = Business_Relation_Record(
+            id=record_id,
+            supplier_id=supplier.id,
+            quantity_deliveries=quantity_deliveries,
+            creation_date=date.today().isoformat()
+        )
+        store.business_relation_records[record_id] = record
+    
+    return render_template("business_relation_records.html", business_relation_records=store.business_relation_records.values(), suppliers=store.suppliers.values())
+
+@views_bp.route("/ui/business_relation_records/<int:record_id>/delete", methods=["POST"])
+
+def delete_business_relation_record_page(record_id):
+    store.business_relation_records.pop(record_id, None)
+    return redirect(url_for("views.business_relation_records_page"))
