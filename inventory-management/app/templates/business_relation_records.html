@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Business Relation Records</h1>
+<table>
+  <tr>
+    <th>Supplier ID</th><th>Quantity of Deliveries</th><th>Creation Date</th><th></th>
+  </tr>
+  {% for business_relation_record in business_relation_records %}
+  <tr>
+    <td>{{ business_relation_record.supplier_id }}</td>
+    <td>{{ business_relation_record.quantity_deliveries }}</td>
+    <td>{{ business_relation_record.creation_date }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
