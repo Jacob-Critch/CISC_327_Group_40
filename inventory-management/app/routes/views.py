@@ -106,9 +106,4 @@ def business_relation_records_page():
         store.business_relation_records[record_id] = record
     
     return render_template("business_relation_records.html", business_relation_records=store.business_relation_records.values(), suppliers=store.suppliers.values())
-
-@views_bp.route("/ui/business_relation_records/<int:record_id>/delete", methods=["POST"])
-
-def delete_business_relation_record_page(record_id):
-    store.business_relation_records.pop(record_id, None)
-    return redirect(url_for("views.business_relation_records_page"))
+#business_relation_records=sorted(store.business_relation_records.values(), key=lambda record: record.quantity_deliveries, reverse=True)

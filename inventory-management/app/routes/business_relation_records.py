@@ -8,11 +8,14 @@ business_relation_records_bp = Blueprint("business_relation_records", __name__, 
 
 @business_relation_records_bp.route("", methods=["GET"])
 def list_business_relation_records():
-    return jsonify([p.to_dict() for p in store.business_relation_records.values()])
+    if not store.business_relation_records.values():
+        return jsonify([])
+    
+    return jsonify([record.to_dict() for record in store.business_relation_records.values()])
 
 @business_relation_records_bp.route("/<int:business_relation_record_id>", methods=["GET"])
-def get_purchase_order(business_relation_record_id):
-    record = store.purchase_orders.get(business_relation_record_id)
+def get_business_relation_record_id(business_relation_record_id):
+    record = store.business_relation_records.get(business_relation_record_id)
     if record is None:
         return jsonify({"error": "Record not found"}), 404
     return jsonify(record.to_dict())
