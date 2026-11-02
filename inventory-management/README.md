@@ -58,7 +58,9 @@ app working without a REST client, and calls the same in-memory store.
 | POST | `/transactions` | Record a stock movement (`product_id`, `type`: IN/OUT, `quantity`, optional `supplier_id`) |
 | GET | `/transactions?product_id=&supplier_id=` | Look up transactions |
 | GET | `/business_relation_records` | List all business relation records |
-| GET | `/business_relation_records/<id>` | Get a business relation record |
+| GET | `/business_relation_records/<id>` | Get one business relation record |
+| POST | `/business_relation_records` | Create a business relation record |
+| DELETE | `/business_relation_records/<id>` | Delete a business relation record |
 
 ## Tests
 
