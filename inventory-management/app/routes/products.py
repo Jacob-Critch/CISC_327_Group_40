@@ -73,3 +73,18 @@ def stock_level(product_id):
     if product is None:
         return jsonify({"error": "Product not found"}), 404
     return jsonify({"product_id": product.id, "quantity_on_hand": product.quantity_on_hand})
+
+# Functional enhancement beginning
+@products_bp.route("/<int:product_id>/is-below-reorder-level", methods=["POST"])
+def invoke_alert(product_id):
+    product = store.products.get(product_id)
+    if product is None:
+        return jsonify({"error": "Product not found"}), 404
+    if product.quantity_on_hand <= product.reorder_level / 2:
+        if not product.is_below_reorder_level:
+            product.is_below_reorder_level = True
+            return jsonify({"message": f"Stock alert for {product.name} ({product.id}): {product.reorder_level - product.quantity_on_hand} more are needed to restore target levels."}), 200
+    else:
+        product.is_below_reorder_level = False
+    return jsonify({"message": f"No stock alert for {product.name} ({product.id})."}), 200
+# Functional enhancement end
