@@ -28,6 +28,7 @@ record stock transactions:
 | Products | `/ui/products` |
 | Suppliers | `/ui/suppliers` |
 | Transactions | `/ui/transactions` |
+| Transactions | `/ui/business_relation_records` |
 
 This UI is separate from the JSON API below — it's there so you can see the
 app working without a REST client, and calls the same in-memory store.
@@ -37,6 +38,7 @@ app working without a REST client, and calls the same in-memory store.
 - **Product**: `id, name, sku, unit_price, quantity_on_hand`
 - **Supplier**: `id, name, contact_email`
 - **Transaction**: `id, product_id, supplier_id, type (IN/OUT), quantity, transaction_date`
+- **Business_Relation_Record**: `id, supplier_id, quantity_deliveries, creation_date`
 
 ## JSON API Endpoints
 
