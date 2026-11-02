@@ -8,12 +8,14 @@ def create_app():
     from app.routes.suppliers import suppliers_bp
     from app.routes.transactions import transactions_bp
     from app.routes.purchase_orders import purchase_orders_bp
+    from app.routes.business_relation_records import business_relation_records_bp
     from app.routes.views import views_bp
 
     app.register_blueprint(products_bp)
     app.register_blueprint(suppliers_bp)
     app.register_blueprint(transactions_bp)
     app.register_blueprint(purchase_orders_bp)
+    app.register_blueprint(business_relation_records_bp)
     app.register_blueprint(views_bp)
 
     return app
