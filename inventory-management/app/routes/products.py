@@ -68,7 +68,6 @@ def delete_product(product_id):
         return jsonify({"error": "Product not found"}), 404
     return "", 204
 
-
 @products_bp.route("/<int:product_id>/stock-level", methods=["GET"])
 def stock_level(product_id):
     product = store.products.get(product_id)
