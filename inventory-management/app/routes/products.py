@@ -76,16 +76,14 @@ def stock_level(product_id):
     return jsonify({"product_id": product.id, "quantity_on_hand": product.quantity_on_hand})
 
 # Functional enhancement beginning
-def send_stock_alerts(message):
-        if send_notification.is_service_available():
-            for admin in store.ADMIN_EMAILS:
-                sent = send_notification.send_notification(admin, "Stock alert", message)
-                if not sent:
-                    return jsonify({"error": f"Failed to send a stock alert to {admin}."}), 404
+def send_stock_alert(recipient, message):
+    if send_notification.is_service_available():
+        sent = send_notification.send_notification(recipient, "Stock alert", message)
+        if not sent:
+            return jsonify({"error": f"Failed to send a stock alert to {recipient}."}), 404
+        return jsonify({"message": f"Sent a stock alert to {recipient}."}), 200
 
-            return jsonify({"message": "Staff stock alerts were sent to all admins."}), 200
-
-        return jsonify({"error": "Notification service is offline."}), 404
+    return jsonify({"error": "Notification service is offline."}), 404
 
 @products_bp.route("/<int:product_id>/is-below-reorder-level", methods=["GET", "POST"])
 def invoke_alert(product_id):
@@ -100,7 +98,9 @@ def invoke_alert(product_id):
 
             message = f"Stock alert for {product.name} ({product.id}): {product.reorder_level - product.quantity_on_hand} more are needed to restore target levels."
 
-            send_stock_alerts(message)
+            if send_notification.is_service_available():
+                for admin in store.ADMIN_EMAILS:
+                    send_stock_alert(admin, message)
             
             return jsonify({"message": message}), 200
     else:
