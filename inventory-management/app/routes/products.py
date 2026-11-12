@@ -77,13 +77,16 @@ def stock_level(product_id):
 
 # Functional enhancement beginning
 def send_stock_alert(recipient, message):
-    if send_notification.is_service_available():
-        sent = send_notification.send_notification(recipient, "Stock alert", message)
-        if not sent:
-            return jsonify({"error": f"Failed to send a stock alert to {recipient}."}), 404
-        return jsonify({"message": f"Sent a stock alert to {recipient}."}), 200
-
-    return jsonify({"error": "Notification service is offline."}), 404
+    if not send_notification.is_service_available():
+        return jsonify({"error": "Notification service is offline."}), 404
+    
+    if not "recipient" in store.ADMIN_EMAILS:
+        return jsonify({"message": f"{recipient} was not sent a alert ({recipient} is not an admin)."}), 200
+    
+    sent = send_notification.send_notification(recipient, "Stock alert", message)
+    if not sent:
+        return jsonify({"error": f"Failed to send a stock alert to {recipient}."}), 404
+    return jsonify({"message": f"Sent a stock alert to {recipient}."}), 200
 
 @products_bp.route("/<int:product_id>/is-below-reorder-level", methods=["GET", "POST"])
 def invoke_alert(product_id):
