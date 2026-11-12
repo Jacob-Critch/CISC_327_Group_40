@@ -20,7 +20,12 @@ Use clear_notifications before and after tests that use the real simulator.
 """
 
 _notifications = []
+is_available = True
 
+
+def set_available(available: bool):
+    global is_available
+    is_available = available
 
 def is_service_available() -> bool:
     """Return True for this local simulator.
@@ -28,7 +33,8 @@ def is_service_available() -> bool:
     Tests may stub this function to return False to simulate an outage.
     No external service is contacted and no random failures are introduced.
     """
-    return True
+    global is_available
+    return is_available
 
 
 def send_notification(recipient: str, subject: str, message: str) -> bool:
@@ -68,3 +74,5 @@ def get_notifications() -> list:
 def clear_notifications() -> None:
     """Remove all recorded notifications, for example between test cases."""
     _notifications.clear()
+    global is_available
+    is_available = True

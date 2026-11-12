@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify, request
 from app import store
 from app.models.product import Product
 
-from notification_service import send_notification
+from notification_service import *
 
 products_bp = Blueprint("products", __name__, url_prefix="/products")
 
@@ -76,19 +76,23 @@ def stock_level(product_id):
     return jsonify({"product_id": product.id, "quantity_on_hand": product.quantity_on_hand})
 
 # Functional enhancement beginning
-def send_stock_alert(recipient, message):
-    if not send_notification.is_service_available():
+@products_bp.route("/send-stock-alert/<int:product_id>", methods=["POST"])
+def send_stock_alert(product_id):
+    if not is_service_available():
         return jsonify({"error": "Notification service is offline."}), 404
-    
-    if not "recipient" in store.ADMIN_EMAILS:
-        return jsonify({"message": f"{recipient} was not sent a alert ({recipient} is not an admin)."}), 200
-    
-    sent = send_notification.send_notification(recipient, "Stock alert", message)
-    if not sent:
-        return jsonify({"error": f"Failed to send a stock alert to {recipient}."}), 404
-    return jsonify({"message": f"Sent a stock alert to {recipient}."}), 200
 
-@products_bp.route("/<int:product_id>/is-below-reorder-level", methods=["GET", "POST"])
+    product = store.products.get(product_id)
+    if product is None:
+        return jsonify({"error": "Product not found"}), 404
+
+    message = f"Stock alert for {product.name} ({product.id}): {product.reorder_level - product.quantity_on_hand} more are needed to restore target levels."
+    for admin in store.ADMIN_EMAILS:
+        sent = send_notification(admin, "Stock alert", message)
+        if not sent:
+            return jsonify({"error": f"Failed to send a stock alert to admin {admin}."}), 404
+    return jsonify({"message": f"Sent a stock alert to admins."}), 200
+
+@products_bp.route("/<int:product_id>/is-below-reorder-level", methods=["POST"])
 def invoke_alert(product_id):
     product = store.products.get(product_id)
 
@@ -100,10 +104,6 @@ def invoke_alert(product_id):
             product.is_below_reorder_level = True
 
             message = f"Stock alert for {product.name} ({product.id}): {product.reorder_level - product.quantity_on_hand} more are needed to restore target levels."
-
-            if send_notification.is_service_available():
-                for admin in store.ADMIN_EMAILS:
-                    send_stock_alert(admin, message)
             
             return jsonify({"message": message}), 200
     else:
