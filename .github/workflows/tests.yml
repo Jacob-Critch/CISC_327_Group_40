@@ -1,0 +1,21 @@
+name: tests
+
+on: 
+    push:
+
+    pull_request:
+        branches: [main]
+
+jobs:
+    test:
+        runs-on: ubuntu-26.04
+
+        steps:
+          - uses: actions/checkout@v5
+
+          - uses: actions/setup-python@v5
+            with: 
+                python-version: "3.10"
+          
+          - working-directory: inventory-management
+            run: pip install -r requirements.txt && python -m pytest -v --cov=app --cov-report=term-missing --cov-fail-under=90

@@ -14,3 +14,7 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+
+# Task 4: Configure GitHub Actions
+htmlcov/
+.coverage
