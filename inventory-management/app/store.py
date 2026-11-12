@@ -6,6 +6,8 @@ the project approachable before students cover databases later in the
 program, while still separating storage from the route/model code.
 """
 
+ADMIN_EMAILS = ["admin@store.com"]
+
 products = {}
 suppliers = {}
 transactions = {}
@@ -28,4 +30,4 @@ def reset():
     transactions.clear()
     purchase_orders.clear()
     business_relation_records.clear()
-    _next_ids.update(product=1, supplier=1, transaction=1, purchase_order=1)
+    _next_ids.update(product=1, supplier=1, transaction=1, purchase_order=1, business_relation_record=1)
