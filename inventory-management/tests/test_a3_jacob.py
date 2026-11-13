@@ -167,3 +167,55 @@ def test_suppliers_empty_supplier_delete_failure_case_line_46(client):
     assert deleteJson["error"] == "Supplier not found"
 
 # ...
+
+# TEST 4: app/routes/transactions.py
+
+# TEST 4A: Empty Product Transaction Create Failure Case (Line 26)
+def test_transactions_empty_product_transaction_create_failure_case_line_26(client):    
+    transactionsPost = client.post("/transactions", json = {"product_id": 1, "quantity": 1, "type": "IN"})
+    assert transactionsPost.status_code == 404
+
+    createJson = transactionsPost.get_json()
+    createJson["error"] == "Product not found"
+
+# TEST 4B: OUT Transaction Type Alternative Case (Lines 33-34)
+def test_transactions_OUT_transaction_type_alternative_case_lines_33_to_34(client):
+    productsPost = client.post("/products", json = {"name": "Product", "quantity_on_hand": 1, "reorder_level": 1, "sku": "A", "unit_price": 1})
+    assert productsPost.status_code == 201
+
+    productJson = productsPost.get_json()
+    assert productJson["id"] == 1
+    assert productJson["name"] == "Product"
+    assert productJson["quantity_on_hand"] == 1
+    assert productJson["reorder_level"] == 1
+    assert productJson["sku"] == "A"
+    assert productJson["unit_price"] == 1
+    
+    transactionsPost = client.post("/transactions", json = {"product_id": 1, "quantity": 1, "type": "OUT"})
+    assert transactionsPost.status_code == 201
+
+    transactionJSON = transactionsPost.get_json()
+    transactionJSON["product_id"] == 1
+    transactionJSON["quantity"] == 1
+    transactionJSON["supplier_id"] == None
+    transactionJSON["transaction_date"] == date.today().isoformat()
+    transactionJSON["type"] == "OUT"
+
+# TEST 4C: Invalid Transaction Type Failure Case (Line 36)
+def test_transactions_invalid_transaction_type_failure_case_line_36(client):
+    productsPost = client.post("/products", json = {"name": "Product", "quantity_on_hand": 1, "reorder_level": 1, "sku": "A", "unit_price": 1})
+    assert productsPost.status_code == 201
+
+    productJson = productsPost.get_json()
+    assert productJson["id"] == 1
+    assert productJson["name"] == "Product"
+    assert productJson["quantity_on_hand"] == 1
+    assert productJson["reorder_level"] == 1
+    assert productJson["sku"] == "A"
+    assert productJson["unit_price"] == 1
+
+    transactionsPost = client.post("/transactions", json = {"product_id": 1, "quantity": 1, "type": "BETWEEN"})
+    assert transactionsPost.status_code == 400
+
+    transactionJSON = transactionsPost.get_json()
+    assert transactionJSON["error"] == "type must be IN or OUT"
