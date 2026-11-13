@@ -147,3 +147,23 @@ def test_products_empty_product_stock_level_Access_failure_case_line_74(client):
 
     accessJson = productsGet.get_json()
     assert accessJson["error"] == "Product not found"
+
+# TEST 3: app/routes/suppliers.py
+
+# TEST 3A: Empty Supplier Update Failure Case (Line 35)
+def test_suppliers_empty_supplier_update_failure_case_line_35(client):
+    suppliersPut = client.put("/suppliers/1", json = {"contact_email": "janedoe@email.com", "name": "Buyer"})
+    assert suppliersPut.status_code == 404
+
+    updateJson = suppliersPut.get_json()
+    assert updateJson["error"] == "Supplier not found"
+
+# TEST 3B: Empty Supplier Delete Failure Case (Line 46)
+def test_suppliers_empty_supplier_delete_failure_case_line_46(client):
+    suppliersDelete = client.delete("/suppliers/1")
+    assert suppliersDelete.status_code == 404
+
+    deleteJson = suppliersDelete.get_json()
+    assert deleteJson["error"] == "Supplier not found"
+
+# ...
