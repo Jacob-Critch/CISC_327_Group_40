@@ -42,10 +42,10 @@ def test_purchase_order_empty_arguments_failure_case():
 
 # TEST 2A: Trivial Case (Lines 17-21)
 def test_products_trivial_case_lines_17_to_21(client):
-    productPost = client.post("/products", json = {"name": "Product", "quantity_on_hand": 1, "reorder_level": 1, "sku": "A", "unit_price": 1})
-    assert productPost.status_code == 201
+    productsPost = client.post("/products", json = {"name": "Product", "quantity_on_hand": 1, "reorder_level": 1, "sku": "A", "unit_price": 1})
+    assert productsPost.status_code == 201
 
-    productJson = productPost.get_json()
+    productJson = productsPost.get_json()
     assert productJson["id"] == 1
     assert productJson["name"] == "Product"
     assert productJson["quantity_on_hand"] == 1
@@ -66,10 +66,10 @@ def test_products_trivial_case_lines_17_to_21(client):
 
 # TEST 2B: Two Low Stocks Alternative Case (Lines 17-21)
 def test_products_two_low_stocs_alrternative_case_lines_17_to_21(client):
-    productPost1 = client.post("/products", json = {"name": "Product 1", "quantity_on_hand": 1, "reorder_level": 1, "sku": "A", "unit_price": 1})
-    assert productPost1.status_code == 201
+    productsPost1 = client.post("/products", json = {"name": "Product 1", "quantity_on_hand": 1, "reorder_level": 1, "sku": "A", "unit_price": 1})
+    assert productsPost1.status_code == 201
     
-    productJson1 = productPost1.get_json()
+    productJson1 = productsPost1.get_json()
     assert productJson1["id"] == 1
     assert productJson1["name"] == "Product 1"
     assert productJson1["quantity_on_hand"] == 1
@@ -77,10 +77,10 @@ def test_products_two_low_stocs_alrternative_case_lines_17_to_21(client):
     assert productJson1["sku"] == "A"
     assert productJson1["unit_price"] == 1 
 
-    productPost2 = client.post("/products", json = {"name": "Product 2", "quantity_on_hand": 2, "reorder_level": 2, "sku": "B", "unit_price": 2})
-    assert productPost2.status_code == 201
+    productsPost2 = client.post("/products", json = {"name": "Product 2", "quantity_on_hand": 2, "reorder_level": 2, "sku": "B", "unit_price": 2})
+    assert productsPost2.status_code == 201
 
-    productJson2 = productPost2.get_json()
+    productJson2 = productsPost2.get_json()
     assert productJson2["id"] == 2
     assert productJson2["name"] == "Product 2"
     assert productJson2["quantity_on_hand"] == 2
@@ -107,10 +107,10 @@ def test_products_two_low_stocs_alrternative_case_lines_17_to_21(client):
 
 # TEST 2C: No Low Stock Alternative Case (Lines 17-21)
 def test_products_no_low_stock_alternative_case_lines_17_to_21(client):
-    productPost = client.post("/products", json = {"name": "Product", "quantity_on_hand": 2, "reorder_level": 1, "sku": "A", "unit_price": 1})
-    assert productPost.status_code == 201
+    productsPost = client.post("/products", json = {"name": "Product", "quantity_on_hand": 2, "reorder_level": 1, "sku": "A", "unit_price": 1})
+    assert productsPost.status_code == 201
     
-    productJson = productPost.get_json()
+    productJson = productsPost.get_json()
     assert productJson["id"] == 1
     assert productJson["name"] == "Product"
     assert productJson["quantity_on_hand"] == 2
@@ -126,24 +126,24 @@ def test_products_no_low_stock_alternative_case_lines_17_to_21(client):
 
 # TEST 2D: Empty Product Update Failure Case (Line 52)
 def test_products_empty_product_update_failure_case_line_52(client):
-    productPut = client.put("/products/1", json = {"name": "Input", "quantity_on_hand": 2, "reorder_level": 2, "sku": "B", "unit_price": 2})
-    assert productPut.status_code == 404
+    productsPut = client.put("/products/1", json = {"name": "Input", "quantity_on_hand": 2, "reorder_level": 2, "sku": "B", "unit_price": 2})
+    assert productsPut.status_code == 404
 
-    updateJson = productPut.get_json()
+    updateJson = productsPut.get_json()
     assert updateJson["error"] == "Product not found"
 
 # TEST 2E: Empty Product Delete Failure Case (Line 66)
 def test_products_empty_product_delete_failure_case_line_66(client):
-    productDelete = client.delete("/products/1")
-    assert productDelete.status_code == 404
+    productsDelete = client.delete("/products/1")
+    assert productsDelete.status_code == 404
 
-    deleteJson = productDelete.get_json()
+    deleteJson = productsDelete.get_json()
     assert deleteJson["error"] == "Product not found"
 
 # TEST 2F: Empty Product Stock Level Access Failure Case (Line 74)
 def test_products_empty_product_stock_level_Access_failure_case_line_74(client):
-    productGet = client.get("/products/1/stock-level")
-    assert productGet.status_code == 404
+    productsGet = client.get("/products/1/stock-level")
+    assert productsGet.status_code == 404
 
-    accessJson = productGet.get_json()
+    accessJson = productsGet.get_json()
     assert accessJson["error"] == "Product not found"
