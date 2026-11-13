@@ -166,7 +166,161 @@ def test_suppliers_empty_supplier_delete_failure_case_line_46(client):
     deleteJson = suppliersDelete.get_json()
     assert deleteJson["error"] == "Supplier not found"
 
-# ...
+# TEST 3C: Trivial Case (Lines 53-54, 56-67)
+def test_suppliers_trivial_case_lines_53_to_54_and_56_to_67(client):
+    productsPost = client.post("/products", json = {"name": "Product", "quantity_on_hand": 1, "reorder_level": 1, "sku": "A", "unit_price": 1})
+    assert productsPost.status_code == 201
+    
+    productJson = productsPost.get_json()
+    assert productJson["id"] == 1
+    assert productJson["name"] == "Product"
+    assert productJson["quantity_on_hand"] == 1
+    assert productJson["reorder_level"] == 1
+    assert productJson["sku"] == "A"
+    assert productJson["unit_price"] == 1
+
+    suppliersPost = client.post("/suppliers", json = {"contact_email": "johndoe@email.com", "name": "Supplier"})
+    assert suppliersPost.status_code == 201
+
+    supplierJSON = suppliersPost.get_json()
+    assert supplierJSON["contact_email"] == "johndoe@email.com"
+    assert supplierJSON["id"] == 1
+    assert supplierJSON["name"] == "Supplier"
+        
+    transactionsPost = client.post("/transactions", json = {"product_id": 1, "quantity": 1, "supplier_id": 1, "type": "IN"})
+    assert transactionsPost.status_code == 201
+    
+    transactionJSON = transactionsPost.get_json()
+    transactionJSON["product_id"] == 1
+    transactionJSON["quantity"] == 1
+    transactionJSON["supplier_id"] == 1
+    transactionJSON["transaction_date"] == date.today().isoformat()
+    transactionJSON["type"] == "IN"
+
+    transactionsGet = client.get("/suppliers/1/products")
+    assert transactionsGet.status_code == 200
+
+    productsJson = transactionsGet.get_json()
+    assert productsJson[0]["id"] == 1
+    assert productsJson[0]["name"] == "Product"
+    assert productsJson[0]["quantity_on_hand"] == 2
+    assert productsJson[0]["reorder_level"] == 1
+    assert productsJson[0]["sku"] == "A"
+    assert productsJson[0]["unit_price"] == 1
+
+# TEST 3D: Two Products Alternative Case (Lines 53-54, 56-67)
+def test_suppliers_two_products_alternative_case_lines_53_to_54_and_56_to_67(client):
+    productsPost1 = client.post("/products", json = {"name": "Product 1", "quantity_on_hand": 1, "reorder_level": 1, "sku": "A", "unit_price": 1})
+    assert productsPost1.status_code == 201
+    
+    productJson1 = productsPost1.get_json()
+    assert productJson1["id"] == 1
+    assert productJson1["name"] == "Product 1"
+    assert productJson1["quantity_on_hand"] == 1
+    assert productJson1["reorder_level"] == 1
+    assert productJson1["sku"] == "A"
+    assert productJson1["unit_price"] == 1 
+
+    productsPost2 = client.post("/products", json = {"name": "Product 2", "quantity_on_hand": 2, "reorder_level": 2, "sku": "B", "unit_price": 2})
+    assert productsPost2.status_code == 201
+
+    productJson2 = productsPost2.get_json()
+    assert productJson2["id"] == 2
+    assert productJson2["name"] == "Product 2"
+    assert productJson2["quantity_on_hand"] == 2
+    assert productJson2["reorder_level"] == 2
+    assert productJson2["sku"] == "B"
+    assert productJson2["unit_price"] == 2
+
+    suppliersPost = client.post("/suppliers", json = {"contact_email": "johndoe@email.com", "name": "Supplier"})
+    assert suppliersPost.status_code == 201
+        
+    supplierJSON = suppliersPost.get_json()
+    assert supplierJSON["contact_email"] == "johndoe@email.com"
+    assert supplierJSON["id"] == 1
+    assert supplierJSON["name"] == "Supplier"
+
+    transactionsPost1 = client.post("/transactions", json = {"product_id": 1, "quantity": 1, "supplier_id": 1, "type": "IN"})
+    assert transactionsPost1.status_code == 201
+    
+    transactionJSON1 = transactionsPost1.get_json()
+    transactionJSON1["product_id"] == 1
+    transactionJSON1["quantity"] == 1
+    transactionJSON1["supplier_id"] == 1
+    transactionJSON1["transaction_date"] == date.today().isoformat()
+    transactionJSON1["type"] == "IN"
+
+    transactionsPost2 = client.post("/transactions", json = {"product_id": 2, "quantity": 2, "supplier_id": 1, "type": "IN"})
+    assert transactionsPost2.status_code == 201
+        
+    transactionJSON2 = transactionsPost2.get_json()
+    transactionJSON2["product_id"] == 2
+    transactionJSON2["quantity"] == 2
+    transactionJSON2["supplier_id"] == 2
+    transactionJSON2["transaction_date"] == date.today().isoformat()
+    transactionJSON2["type"] == "IN"
+
+    transactionsGet = client.get("/suppliers/1/products")
+    assert transactionsGet.status_code == 200
+
+    productsJson = transactionsGet.get_json()
+    assert productsJson[0]["id"] == 1
+    assert productsJson[0]["name"] == "Product 1"
+    assert productsJson[0]["quantity_on_hand"] == 2
+    assert productsJson[0]["reorder_level"] == 1
+    assert productsJson[0]["sku"] == "A"
+    assert productsJson[0]["unit_price"] == 1
+    assert productsJson[1]["id"] == 2
+    assert productsJson[1]["name"] == "Product 2"
+    assert productsJson[1]["quantity_on_hand"] == 4
+    assert productsJson[1]["reorder_level"] == 2
+    assert productsJson[1]["sku"] == "B"
+    assert productsJson[1]["unit_price"] == 2
+
+# TEST 3E: No Products Alternative Case (Lines 53-54, 56-67)
+def test_suppliers_no_products_alternative_case_lines_53_to_54_and_56_to_67(client):
+    productsPost = client.post("/products", json = {"name": "Product", "quantity_on_hand": 1, "reorder_level": 1, "sku": "A", "unit_price": 1})
+    assert productsPost.status_code == 201
+        
+    productJson = productsPost.get_json()
+    assert productJson["id"] == 1
+    assert productJson["name"] == "Product"
+    assert productJson["quantity_on_hand"] == 1
+    assert productJson["reorder_level"] == 1
+    assert productJson["sku"] == "A"
+    assert productJson["unit_price"] == 1
+    
+    suppliersPost = client.post("/suppliers", json = {"contact_email": "johndoe@email.com", "name": "Supplier"})
+    assert suppliersPost.status_code == 201
+    
+    supplierJSON = suppliersPost.get_json()
+    assert supplierJSON["contact_email"] == "johndoe@email.com"
+    assert supplierJSON["id"] == 1
+    assert supplierJSON["name"] == "Supplier"
+            
+    transactionsPost = client.post("/transactions", json = {"product_id": 1, "quantity": 1, "supplier_id": 1, "type": "OUT"})
+    assert transactionsPost.status_code == 201
+        
+    transactionJSON = transactionsPost.get_json()
+    transactionJSON["product_id"] == 1
+    transactionJSON["quantity"] == 1
+    transactionJSON["supplier_id"] == 1
+    transactionJSON["transaction_date"] == date.today().isoformat()
+    transactionJSON["type"] == "OUT"
+    
+    transactionsGet = client.get("/suppliers/1/products")
+    assert transactionsGet.status_code == 200
+    
+    productsJson = transactionsGet.get_json()
+    assert productsJson == list()
+
+# TEST 3F: Empty Supplier Failure Case (Line 55)
+def test_suppliers_empty_supplier_failure_case_line_55(client):
+    transactionGet = client.get("/suppliers/1/products")
+    assert transactionGet.status_code == 404
+
+    productsJson = transactionGet.get_json()
+    assert productsJson["error"] == "Supplier not found"
 
 # TEST 4: app/routes/transactions.py
 
