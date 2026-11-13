@@ -125,7 +125,7 @@ def test_products_no_low_stock_alternative_case_lines_17_to_21(client):
     assert lowStockJson == list()
 
 # TEST 2D: Empty Product Update Failure Case (Line 52)
-def test_empty_product_update_failure_case_line_52(client):
+def test_products_empty_product_update_failure_case_line_52(client):
     productPut = client.put("/products/1", json = {"name": "Input", "quantity_on_hand": 2, "reorder_level": 2, "sku": "B", "unit_price": 2})
     assert productPut.status_code == 404
 
@@ -133,7 +133,7 @@ def test_empty_product_update_failure_case_line_52(client):
     assert updateJson["error"] == "Product not found"
 
 # TEST 2E: Empty Product Delete Failure Case (Line 66)
-def test_empty_product_delete_failure_case_line_66(client):
+def test_products_empty_product_delete_failure_case_line_66(client):
     productDelete = client.delete("/products/1")
     assert productDelete.status_code == 404
 
@@ -141,7 +141,7 @@ def test_empty_product_delete_failure_case_line_66(client):
     assert deleteJson["error"] == "Product not found"
 
 # TEST 2F: Empty Product Stock Level Access Failure Case (Line 74)
-def test_empty_product_stock_level_Access_failure_case_line_74(client):
+def test_products_empty_product_stock_level_Access_failure_case_line_74(client):
     productGet = client.get("/products/1/stock-level")
     assert productGet.status_code == 404
 
