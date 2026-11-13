@@ -148,9 +148,13 @@ def test_products_empty_product_stock_level_Access_failure_case_line_74(client):
     accessJson = productsGet.get_json()
     assert accessJson["error"] == "Product not found"
 
-# TEST 3: app/routes/suppliers.py
+# TEST 3: app/routes/purchase_orders.py
 
-# TEST 3A: Empty Supplier Update Failure Case (Line 35)
+# ...
+
+# TEST 4: app/routes/suppliers.py
+
+# TEST 4A: Empty Supplier Update Failure Case (Line 35)
 def test_suppliers_empty_supplier_update_failure_case_line_35(client):
     suppliersPut = client.put("/suppliers/1", json = {"contact_email": "janedoe@email.com", "name": "Buyer"})
     assert suppliersPut.status_code == 404
@@ -158,7 +162,7 @@ def test_suppliers_empty_supplier_update_failure_case_line_35(client):
     updateJson = suppliersPut.get_json()
     assert updateJson["error"] == "Supplier not found"
 
-# TEST 3B: Empty Supplier Delete Failure Case (Line 46)
+# TEST 4B: Empty Supplier Delete Failure Case (Line 46)
 def test_suppliers_empty_supplier_delete_failure_case_line_46(client):
     suppliersDelete = client.delete("/suppliers/1")
     assert suppliersDelete.status_code == 404
@@ -166,7 +170,7 @@ def test_suppliers_empty_supplier_delete_failure_case_line_46(client):
     deleteJson = suppliersDelete.get_json()
     assert deleteJson["error"] == "Supplier not found"
 
-# TEST 3C: Trivial Case (Lines 53-54, 56-67)
+# TEST 4C: Trivial Case (Lines 53-54, 56-67)
 def test_suppliers_trivial_case_lines_53_to_54_and_56_to_67(client):
     productsPost = client.post("/products", json = {"name": "Product", "quantity_on_hand": 1, "reorder_level": 1, "sku": "A", "unit_price": 1})
     assert productsPost.status_code == 201
@@ -208,7 +212,7 @@ def test_suppliers_trivial_case_lines_53_to_54_and_56_to_67(client):
     assert productsJson[0]["sku"] == "A"
     assert productsJson[0]["unit_price"] == 1
 
-# TEST 3D: Two Products Alternative Case (Lines 53-54, 56-67)
+# TEST 4D: Two Products Alternative Case (Lines 53-54, 56-67)
 def test_suppliers_two_products_alternative_case_lines_53_to_54_and_56_to_67(client):
     productsPost1 = client.post("/products", json = {"name": "Product 1", "quantity_on_hand": 1, "reorder_level": 1, "sku": "A", "unit_price": 1})
     assert productsPost1.status_code == 201
@@ -277,7 +281,7 @@ def test_suppliers_two_products_alternative_case_lines_53_to_54_and_56_to_67(cli
     assert productsJson[1]["sku"] == "B"
     assert productsJson[1]["unit_price"] == 2
 
-# TEST 3E: No Products Alternative Case (Lines 53-54, 56-67)
+# TEST 4E: No Products Alternative Case (Lines 53-54, 56-67)
 def test_suppliers_no_products_alternative_case_lines_53_to_54_and_56_to_67(client):
     productsPost = client.post("/products", json = {"name": "Product", "quantity_on_hand": 1, "reorder_level": 1, "sku": "A", "unit_price": 1})
     assert productsPost.status_code == 201
@@ -314,7 +318,7 @@ def test_suppliers_no_products_alternative_case_lines_53_to_54_and_56_to_67(clie
     productsJson = transactionsGet.get_json()
     assert productsJson == list()
 
-# TEST 3F: Empty Supplier Failure Case (Line 55)
+# TEST 4F: Empty Supplier Failure Case (Line 55)
 def test_suppliers_empty_supplier_failure_case_line_55(client):
     transactionGet = client.get("/suppliers/1/products")
     assert transactionGet.status_code == 404
@@ -322,9 +326,9 @@ def test_suppliers_empty_supplier_failure_case_line_55(client):
     productsJson = transactionGet.get_json()
     assert productsJson["error"] == "Supplier not found"
 
-# TEST 4: app/routes/transactions.py
+# TEST 5: app/routes/transactions.py
 
-# TEST 4A: Empty Product Transaction Create Failure Case (Line 26)
+# TEST 5A: Empty Product Transaction Create Failure Case (Line 26)
 def test_transactions_empty_product_transaction_create_failure_case_line_26(client):    
     transactionsPost = client.post("/transactions", json = {"product_id": 1, "quantity": 1, "type": "IN"})
     assert transactionsPost.status_code == 404
@@ -332,7 +336,7 @@ def test_transactions_empty_product_transaction_create_failure_case_line_26(clie
     createJson = transactionsPost.get_json()
     createJson["error"] == "Product not found"
 
-# TEST 4B: OUT Transaction Type Alternative Case (Lines 33-34)
+# TEST 5B: OUT Transaction Type Alternative Case (Lines 33-34)
 def test_transactions_OUT_transaction_type_alternative_case_lines_33_to_34(client):
     productsPost = client.post("/products", json = {"name": "Product", "quantity_on_hand": 1, "reorder_level": 1, "sku": "A", "unit_price": 1})
     assert productsPost.status_code == 201
@@ -355,7 +359,7 @@ def test_transactions_OUT_transaction_type_alternative_case_lines_33_to_34(clien
     transactionJSON["transaction_date"] == date.today().isoformat()
     transactionJSON["type"] == "OUT"
 
-# TEST 4C: Invalid Transaction Type Failure Case (Line 36)
+# TEST 5C: Invalid Transaction Type Failure Case (Line 36)
 def test_transactions_invalid_transaction_type_failure_case_line_36(client):
     productsPost = client.post("/products", json = {"name": "Product", "quantity_on_hand": 1, "reorder_level": 1, "sku": "A", "unit_price": 1})
     assert productsPost.status_code == 201
