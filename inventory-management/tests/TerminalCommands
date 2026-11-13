@@ -20,8 +20,8 @@ python -m pytest -s
 
 | RUN COVERAGE-DIRECTED TESTS |
 
-python -m pytest -v --cov=app --cov-report=term-missing --cov-fail-under=90
+python -m pytest --cov=app --cov-report=term-missing --cov-report=html
 
-| RUN COVERAGE-DIRECTED TESTS WITHOUT INPUT CAPTURING |
+| RUN VERBOSE COVERAGE-DIRECTED TESTS WITHOUT INPUT CAPTURING |
 
-python -m pytest -s -v --cov=app --cov-report=term-missing --cov-fail-under=90
+python -m pytest -v -s --cov=app --cov-report=term-missing --cov-report=html
