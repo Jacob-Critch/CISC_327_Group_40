@@ -1,4 +1,7 @@
+from app import store
 from datetime import date
+from unittest.mock import patch
+from notification_service import send_notification
 from app.models.purchase_order import PurchaseOrder
 
 # TEST 1: app/models/purchase_order.py
@@ -579,3 +582,29 @@ def test_transactions_invalid_transaction_type_failure_case_line_36(client):
 
     transactionJSON = transactionsPost.get_json()
     assert transactionJSON["error"] == "type must be IN or OUT"
+
+# TEST 6: notification_service.py
+
+# TEST 6A: Failure Path Notification Test With a Stub Returning False
+def test_stock_alert_failed_notification(client, monkeypatch):
+    productsPost = client.post("/products", json = {"name": "Product", "quantity_on_hand": 1, "reorder_level": 1, "sku": "A", "unit_price": 1})
+    assert productsPost.status_code == 201
+
+    productJson = productsPost.get_json()
+    assert productJson["id"] == 1
+    assert productJson["name"] == "Product"
+    assert productJson["quantity_on_hand"] == 1
+    assert productJson["reorder_level"] == 1
+    assert productJson["sku"] == "A"
+    assert productJson["unit_price"] == 1 
+    
+    monkeypatch.setattr("app.routes.products.send_notification", lambda recipient, subject, message: False)
+
+    product_id = {"product_id": 1}
+
+    sendStockAlertPost = client.post("/products/send-stock-alert/1", json = product_id)
+    assert sendStockAlertPost.status_code == 404
+
+    alertJson = sendStockAlertPost.get_json()
+    for admin in store.ADMIN_EMAILS:
+        assert alertJson == {"error": f"Failed to send a stock alert to admin {admin}."}
