@@ -634,8 +634,8 @@ def test_outage_sends_no_notification(client, monkeypatch):
 
     mock_send.assert_not_called()
 
-# TEST 6C: Empty Product ID Non-Trigger Path Notification Test With a Mock Verifying That No Call Is Made
-def test_empty_product_id_sends_no_notification(client):    
+# TEST 6C: Non-Existent Product ID Non-Trigger Path Notification Test With a Mock Verifying That No Call Is Made
+def test_nonexistent_product_id_sends_no_notification(client):    
     with patch("app.routes.products.send_notification") as mock_send:
         product_id = {"product_id": 1}
 
