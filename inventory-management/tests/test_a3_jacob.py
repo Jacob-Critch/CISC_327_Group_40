@@ -1,7 +1,6 @@
 from app import store
 from datetime import date
 from unittest.mock import patch
-from notification_service import send_notification
 from app.models.purchase_order import PurchaseOrder
 
 # TEST 1: app/models/purchase_order.py
@@ -608,3 +607,42 @@ def test_stock_alert_failed_notification(client, monkeypatch):
     alertJson = sendStockAlertPost.get_json()
     for admin in store.ADMIN_EMAILS:
         assert alertJson == {"error": f"Failed to send a stock alert to admin {admin}."}
+
+# TEST 6B: An Outage Non-Trigger Path Notification Test With a Mock Verifying That No Call Is Made
+def test_outage_sends_no_notification(client, monkeypatch):
+    productsPost = client.post("/products", json = {"name": "Product", "quantity_on_hand": 1, "reorder_level": 1, "sku": "A", "unit_price": 1})
+    assert productsPost.status_code == 201
+
+    productJson = productsPost.get_json()
+    assert productJson["id"] == 1
+    assert productJson["name"] == "Product"
+    assert productJson["quantity_on_hand"] == 1
+    assert productJson["reorder_level"] == 1
+    assert productJson["sku"] == "A"
+    assert productJson["unit_price"] == 1 
+    
+    monkeypatch.setattr("app.routes.products.is_service_available", lambda: False)
+
+    with patch("app.routes.products.send_notification") as mock_send:
+        product_id = {"product_id": 1}
+
+        sendStockAlertPost = client.post("/products/send-stock-alert/1", json = product_id)
+        assert sendStockAlertPost.status_code == 404
+
+    alertJson = sendStockAlertPost.get_json()
+    assert alertJson == {"error": "Notification service is offline."}
+
+    mock_send.assert_not_called()
+
+# TEST 6C: Empty Product ID Non-Trigger Path Notification Test With a Mock Verifying That No Call Is Made
+def test_empty_product_id_sends_no_notification(client):    
+    with patch("app.routes.products.send_notification") as mock_send:
+        product_id = {"product_id": 1}
+
+        sendStockAlertPost = client.post("/products/send-stock-alert/1", json = product_id)
+        assert sendStockAlertPost.status_code == 404
+
+    alertJson = sendStockAlertPost.get_json()
+    assert alertJson == {"error": "Product not found"}
+
+    mock_send.assert_not_called()
