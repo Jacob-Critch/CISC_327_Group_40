@@ -18,7 +18,7 @@ def test_notification_service_offline_returns_404(client):
     if message == None:
         assert False
     else:
-        assert message["error"] == "Notification service is offline."
+        assert message['error'] == "Notification service is offline."
     assert notification_service.get_notifications() == []
 
 def test_notification_service_online_valid_product_id_sends_notification_and_returns_200(client):
@@ -28,22 +28,22 @@ def test_notification_service_online_valid_product_id_sends_notification_and_ret
     response = client.post("/products", json = {"name": "Product", "quantity_on_hand": 2, "reorder_level": 2, "sku": "A", "unit_price": 1})
     assert response.status_code == 201
     product = response.get_json()
-    assert product["id"] == 1
-    assert product["is_below_reorder_level"] == False
-    assert product["name"] == "Product"
-    assert product["quantity_on_hand"] == 2
-    assert product["reorder_level"] == 2
-    assert product["sku"] == "A"
-    assert product["unit_price"] == 1
+    assert product['id'] == 1
+    assert product['is_below_reorder_level'] == False
+    assert product['name'] == "Product"
+    assert product['quantity_on_hand'] == 2
+    assert product['reorder_level'] == 2
+    assert product['sku'] == "A"
+    assert product['unit_price'] == 1
     
     response = client.post(f"/products/send-stock-alert/{product['id']}")
     assert response.status_code == 200
 
     response = notification_service.get_notifications()
     assert response != []
-    assert response[0]["recipient"] == store.ADMIN_EMAILS[0]
-    assert response[0]["subject"] == "Stock alert"
-    assert response[0]["message"] == f"Stock alert for {product["name"]} ({product["id"]}): {product["reorder_level"] - product["quantity_on_hand"]} more are needed to restore target levels."
+    assert response[0]['recipient'] == store.ADMIN_EMAILS[0]
+    assert response[0]['subject'] == "Stock alert"
+    assert response[0]['message'] == f"Stock alert for {product['name']} ({product['id']}): {product['reorder_level'] - product['quantity_on_hand']} more are needed to restore target levels."
     
 
 def test_notification_service_online_invalid_product_id_returns_404(client):
@@ -56,7 +56,7 @@ def test_notification_service_online_invalid_product_id_returns_404(client):
     if message == None:
         assert False
     else:
-        assert message["error"] == "Product not found"
+        assert message['error'] == "Product not found"
 
     response = notification_service.get_notifications()
     assert response == []
@@ -67,25 +67,25 @@ def test_business_relation_record_get_invalid_id_get_returns_404_error(client):
     response = client.get("/business_relation_records/0")
     assert response.status_code == 404
     record = response.get_json()
-    assert record["error"] == "Record not found"
+    assert record['error'] == "Record not found"
 
 #Tests for the delete_business_relation_record(business_relation_record_id) function in app/routes/business_relation_records.py
 def test_business_relation_record_delete_valid_record_deletes_and_returns_200(client):
     response = client.post("/business_relation_records", json = {"supplier_id": 1, "quantity_deliveries": 1})
     assert response.status_code == 201
     record = response.get_json()
-    assert record["id"] == 1
+    assert record['id'] == 1
 
     response = client.delete("/business_relation_records/1")
     assert response.status_code == 200
     record = response.get_json()
-    assert record["message"] == "Record ID 1 was deleted"
+    assert record['message'] == "Record ID 1 was deleted"
 
 def test_business_relation_record_delete_invalid_record_returns_404_error(client):
     response = client.delete("/business_relation_records/0")
     assert response.status_code == 404
     record = response.get_json()
-    assert record["error"] == "Record not found"
+    assert record['error'] == "Record not found"
 
 ## Tests app/routes/views.py
 #Tests for the home() function
@@ -114,7 +114,7 @@ def tests_products_page_post_adds_product_and_returns_products_page_with_product
 
     response = client.get("/ui/products")
     assert response != get_empty
-    assert payload["name"] in response.get_data(as_text=True)
+    assert payload['name'] in response.get_data(as_text=True)
 
 def test_products_page_post_invalid_product_only_returns_redirect_to_product_page(client):
     response_1 = client.get("/ui/products")
@@ -148,10 +148,10 @@ def tests_product_page_delete_removes_valid_product_returns_redirect_to_products
     assert response.location == "/ui/products"
 
     response = client.get("/ui/products")
-    assert payload["name"] in response.get_data(as_text=True)
+    assert payload['name'] in response.get_data(as_text=True)
 
     response = client.post("/ui/products/1/delete", follow_redirects=True)
-    assert payload["name"] not in response.get_data(as_text=True)
+    assert payload['name'] not in response.get_data(as_text=True)
 
 def tests_product_page_delete_invalid_product_returns_only_redirect_to_products_page(client):
     response_1 = client.get("/ui/products")
@@ -177,8 +177,8 @@ def tests_suppliers_page_post_adds_product_and_returns_suppliers_page_with_suppl
 
     response = client.get("/ui/suppliers")
     assert response != get_empty
-    assert payload["name"] in response.get_data(as_text=True)
-    assert payload["contact_email"] in response.get_data(as_text=True)
+    assert payload['name'] in response.get_data(as_text=True)
+    assert payload['contact_email'] in response.get_data(as_text=True)
 
 def test_suppliers_page_post_invalid_supplier_only_returns_redirect_to_supplier_page(client):
     response_1 = client.get("/ui/suppliers")
@@ -209,10 +209,10 @@ def tests_supplier_page_delete_removes_valid_supplier_returns_redirect_to_suppli
     assert response.location == "/ui/suppliers"
 
     response = client.get("/ui/suppliers")
-    assert payload["name"] in response.get_data(as_text=True)
+    assert payload['name'] in response.get_data(as_text=True)
 
     response = client.delete("/ui/suppliers/1/delete", follow_redirects=True)
-    assert payload["name"] not in response.get_data(as_text=True)
+    assert payload['name'] not in response.get_data(as_text=True)
 
 def tests_supplier_page_delete_invalid_supplier_returns_only_redirect_to_suppliers_page(client):
     response_1 = client.get("/ui/suppliers")
@@ -267,10 +267,10 @@ def test_transaction_page_post_valid_transaction_posts_transaction_and_returns_r
 
         response = client.get("/ui/transactions")
         assert response != get_empty
-        assert str(payload["product_id"]) in response.get_data(as_text=True)
-        assert payload["type"] in response.get_data(as_text=True)
-        assert str(payload["quantity"]) in response.get_data(as_text=True)
-        assert str(payload["supplier_id"]) in response.get_data(as_text=True)
+        assert str(payload['product_id']) in response.get_data(as_text=True)
+        assert payload['type'] in response.get_data(as_text=True)
+        assert str(payload['quantity']) in response.get_data(as_text=True)
+        assert str(payload['supplier_id']) in response.get_data(as_text=True)
 
 def test_transactions_page_post_invalid_transactions_only_returns_redirect_to_transactions_page(client):
     response_1 = client.get("/ui/transactions")
