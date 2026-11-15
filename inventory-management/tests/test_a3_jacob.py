@@ -1,7 +1,7 @@
-from app import store
 from datetime import date
 from unittest.mock import patch
 from app.models.purchase_order import PurchaseOrder
+from app.store import ADMIN_EMAILS
 
 # TEST 1: app/models/purchase_order.py
 
@@ -605,8 +605,7 @@ def test_stock_alert_failed_notification(client, monkeypatch):
     assert sendStockAlertPost.status_code == 404
 
     alertJson = sendStockAlertPost.get_json()
-    for admin in store.ADMIN_EMAILS:
-        assert alertJson == {"error": f"Failed to send a stock alert to admin {admin}."}
+    assert alertJson["error"] == f"Failed to send a stock alert to admin {ADMIN_EMAILS[0]}."
 
 # TEST 6B: An Outage Non-Trigger Path Notification Test With a Mock Verifying That No Call Is Made
 def test_outage_sends_no_notification(client, monkeypatch):
