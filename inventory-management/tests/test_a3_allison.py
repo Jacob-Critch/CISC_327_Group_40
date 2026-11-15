@@ -36,7 +36,7 @@ def test_notification_service_online_valid_product_id_sends_notification_and_ret
     assert product["sku"] == "A"
     assert product["unit_price"] == 1
     
-    response = client.post(f"/products/send-stock-alert/{product["id"]}")
+    response = client.post(f"/products/send-stock-alert/{product['id']}")
     assert response.status_code == 200
 
     response = notification_service.get_notifications()
