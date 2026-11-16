@@ -582,7 +582,7 @@ def test_transactions_invalid_transaction_type_failure_case_line_36(client):
     transactionJSON = transactionsPost.get_json()
     assert transactionJSON["error"] == "type must be IN or OUT"
 
-# TEST 6: notification_service.py
+# TEST 6: send_notification
 
 # TEST 6A: Failure Path Notification Test With a Stub Returning False
 def test_stock_alert_failed_notification(client, monkeypatch):
