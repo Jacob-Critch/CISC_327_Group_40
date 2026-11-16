@@ -51,7 +51,7 @@ def suppliers_page():
     return render_template("suppliers.html", suppliers=store.suppliers.values())
 
 
-@views_bp.route("/ui/suppliers/<int:supplier_id>/delete", methods=["POST"])
+@views_bp.route("/ui/suppliers/<int:supplier_id>/delete", methods=["DELETE"])
 def delete_supplier_page(supplier_id):
     store.suppliers.pop(supplier_id, None)
     return redirect(url_for("views.suppliers_page"))

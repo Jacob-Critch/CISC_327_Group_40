@@ -18,7 +18,7 @@ def get_business_relation_record_id(business_relation_record_id):
     record = store.business_relation_records.get(business_relation_record_id)
     if record is None:
         return jsonify({"error": "Record not found"}), 404
-    return jsonify(record.to_dict())
+    return jsonify(record.to_dict()), 200
 
 @business_relation_records_bp.route("", methods=["POST"])
 def create_business_relation_record():
@@ -38,4 +38,4 @@ def delete_business_relation_record(business_relation_record_id):
     business_relation_record = store.business_relation_records.pop(business_relation_record_id, None)
     if business_relation_record is None:
         return jsonify({"error": "Record not found"}), 404
-    return "", 204
+    return jsonify({"message": f"Record ID {business_relation_record_id} was deleted"}), 200
